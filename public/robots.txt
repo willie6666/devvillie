@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://devvillie.me/sitemap-index.xml
+
+Disallow: /admin-B2K750FSsUOv1n0p.php
