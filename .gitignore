@@ -8,3 +8,5 @@
 /.env.production
 
 /.claude
+
+/AGENTS.md
