@@ -2,7 +2,7 @@
 ---
 
 <section id="hero" class="relative min-h-screen flex items-center justify-center z-10">
-  <div class="text-center px-6">
+  <div class="text-center px-6 card-glass rounded-2xl py-12 md:px-16">
     <p class="font-mono text-sm md:text-base text-[var(--color-accent-cyan)] mb-4 opacity-0" id="hero-greeting">
       &gt; Hello, World!
     </p>
@@ -11,20 +11,6 @@
     </h1>
     <div class="font-mono text-lg md:text-xl text-[var(--color-text-secondary)] mb-8 h-8 opacity-0" id="hero-typer">
       <span id="typewriter"></span><span class="animate-pulse">|</span>
-    </div>
-    <div class="flex gap-4 justify-center opacity-0" id="hero-cta">
-      <a
-        href="#about"
-        class="px-6 py-3 border border-[var(--color-accent-cyan)] text-[var(--color-accent-cyan)] font-mono text-sm rounded hover:bg-[var(--color-accent-cyan)] hover:text-[var(--color-bg-primary)] transition-all duration-300"
-      >
-        Explore
-      </a>
-      <a
-        href="#contact"
-        class="px-6 py-3 border border-[var(--color-accent-purple)] text-[var(--color-accent-purple)] font-mono text-sm rounded hover:bg-[var(--color-accent-purple)] hover:text-white transition-all duration-300"
-      >
-        Contact
-      </a>
     </div>
   </div>
   <div class="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce">
@@ -78,7 +64,7 @@
   setTimeout(type, 1000);
 
   // Fade in hero elements
-  const heroEls = ['hero-greeting', 'hero-name', 'hero-typer', 'hero-cta'];
+  const heroEls = ['hero-greeting', 'hero-name', 'hero-typer'];
   heroEls.forEach((id, i) => {
     const el = document.getElementById(id);
     if (el) {
@@ -94,8 +80,7 @@
 <style>
   #hero-greeting,
   #hero-name,
-  #hero-typer,
-  #hero-cta {
+  #hero-typer {
     transform: translateY(20px);
   }
 </style>

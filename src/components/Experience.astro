@@ -1,0 +1,49 @@
+---
+const experiences = [
+  {
+    title: '黑客社 - 網管部長 、 事務部員',
+    description: '逢甲大學黑客社 第 12 屆 網管部長 、 事務部員',
+  },
+  {
+    title: '中區資安體驗營 - 助教',
+    description: '2025 AIS3 CLUB 中區資安體驗營 - 臺中科技大學',
+  },
+  {
+    title: 'PUPC - 銀牌獎',
+    description: "隊伍名 - 'Team Name'",
+  },
+  {
+    title: 'ITSA - 第九名',
+    description: '隊伍名 - retsam端全為成要你',
+  },
+  {
+    title: '逢甲大學 程式技術挑戰賽 - 第一名',
+    description: '隊伍名 - 你說的對，但是狂獵西斯克里夫的非常好三技Lament, Mourn, and Despair。就好比是戴起面具拿起手套的羅蘭。或是有感染蟲負責定身一坨槍兵的毒爆蟲…',
+  },
+];
+---
+
+<section id="experience" class="relative z-10 py-24 px-6">
+  <div class="max-w-4xl mx-auto section-backdrop p-8 md:p-12">
+    <h2 class="font-mono text-3xl md:text-4xl font-bold mb-2 scroll-fade">
+      <span class="text-[var(--color-accent-cyan)]">#</span> Experience
+    </h2>
+    <div class="w-20 h-0.5 bg-[var(--color-accent-cyan)] mb-12 scroll-fade"></div>
+
+    <div class="space-y-4">
+      {experiences.map((exp) => (
+        <div class="flex items-center gap-4 p-4 rounded-lg card-glass card-glow transition-all duration-300 hover:translate-x-2 scroll-fade">
+          <span class="text-[var(--color-accent-cyan)] text-lg">&#9654;</span>
+          <div>
+            <h3 class="font-mono text-base font-semibold text-[var(--color-text-primary)]">
+              {exp.title}
+            </h3>
+            <p class="text-sm text-[var(--color-text-secondary)]">
+              {exp.description}
+            </p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
