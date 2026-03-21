@@ -174,6 +174,107 @@ export function initThreeScene(container: HTMLElement) {
   const MOUSE_REPEL_STRENGTH = 0.4;
   const mouseWorld = new THREE.Vector3();
 
+  // --- Among Us Crewmates ---
+  function createAmogusShape() {
+    const shape = new THREE.Shape();
+    // Body
+    shape.moveTo(-1.2, -2);
+    shape.lineTo(-1.2, 0.5);
+    shape.quadraticCurveTo(-1.2, 2, 0, 2.2);
+    shape.quadraticCurveTo(1.2, 2, 1.2, 0.5);
+    shape.lineTo(1.2, -0.5);
+    // Right leg gap
+    shape.lineTo(1.2, -2);
+    shape.lineTo(0.15, -2);
+    shape.lineTo(0.15, -1.2);
+    shape.lineTo(-0.15, -1.2);
+    shape.lineTo(-0.15, -2);
+    shape.lineTo(-1.2, -2);
+    return shape;
+  }
+
+  function createVisorShape() {
+    const shape = new THREE.Shape();
+    shape.moveTo(0.2, 0.6);
+    shape.quadraticCurveTo(1.4, 0.6, 1.4, 1.2);
+    shape.quadraticCurveTo(1.4, 1.8, 0.2, 1.8);
+    shape.lineTo(0.2, 0.6);
+    return shape;
+  }
+
+  function createBackpackShape() {
+    const shape = new THREE.Shape();
+    shape.moveTo(-1.2, -0.5);
+    shape.lineTo(-1.8, -0.5);
+    shape.quadraticCurveTo(-2.0, -0.5, -2.0, 0);
+    shape.lineTo(-2.0, 1.0);
+    shape.quadraticCurveTo(-2.0, 1.3, -1.8, 1.3);
+    shape.lineTo(-1.2, 1.3);
+    return shape;
+  }
+
+  const AMOGUS_COLORS = [0x00ffcc, 0x8b5cf6, 0xff6b6b, 0xffd93d, 0x6bcb77];
+  const amogusGroup: {
+    mesh: THREE.Group;
+    vel: THREE.Vector3;
+    rotVel: number;
+    life: number;
+    maxLife: number;
+  }[] = [];
+
+  function spawnAmogus() {
+    const group = new THREE.Group();
+    const color = AMOGUS_COLORS[Math.floor(Math.random() * AMOGUS_COLORS.length)];
+
+    const extrudeSettings = { depth: 0.5, bevelEnabled: false };
+
+    // Body
+    const bodyGeo = new THREE.ExtrudeGeometry(createAmogusShape(), extrudeSettings);
+    const bodyMat = new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0, depthWrite: false });
+    group.add(new THREE.Mesh(bodyGeo, bodyMat));
+
+    // Visor
+    const visorGeo = new THREE.ExtrudeGeometry(createVisorShape(), { depth: 0.6, bevelEnabled: false });
+    const visorMat = new THREE.MeshBasicMaterial({ color: 0x88cfff, transparent: true, opacity: 0, depthWrite: false });
+    const visor = new THREE.Mesh(visorGeo, visorMat);
+    visor.position.z = -0.05;
+    group.add(visor);
+
+    // Backpack
+    const bpGeo = new THREE.ExtrudeGeometry(createBackpackShape(), extrudeSettings);
+    const bpMat = new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0, depthWrite: false });
+    group.add(new THREE.Mesh(bpGeo, bpMat));
+
+    // Random position far in the background
+    group.position.set(
+      (Math.random() - 0.5) * 120,
+      (Math.random() - 0.5) * 70,
+      -40 - Math.random() * 40
+    );
+    const s = 0.25 + Math.random() * 0.35;
+    group.scale.set(s, s, s);
+
+    scene.add(group);
+
+    const maxLife = 6 + Math.random() * 6; // 6-12 seconds
+    amogusGroup.push({
+      mesh: group,
+      vel: new THREE.Vector3(
+        (Math.random() - 0.5) * 0.03,
+        0.02 + Math.random() * 0.03,
+        0
+      ),
+      rotVel: (Math.random() - 0.5) * 0.01,
+      life: 0,
+      maxLife,
+    });
+  }
+
+  // Spawn one initially, then periodically
+  spawnAmogus();
+  let amogusTimer = 0;
+  const AMOGUS_SPAWN_INTERVAL = 4; // seconds between spawns
+
   // --- Animation Loop ---
   let time = 0;
 
@@ -244,6 +345,50 @@ export function initThreeScene(container: HTMLElement) {
       mesh.position.x = data.basePos.x + Math.sin(time * 2 + i) * 3 + mouse.x * 5;
       mesh.position.y = data.basePos.y + Math.cos(time * 1.5 + i * 0.7) * 2 + mouse.y * 3 + scrollOffset;
     });
+
+    // Update Among Us crewmates
+    const dt = 0.016; // ~60fps
+    amogusTimer += dt;
+    if (amogusTimer >= AMOGUS_SPAWN_INTERVAL && amogusGroup.length < 5) {
+      spawnAmogus();
+      amogusTimer = 0;
+    }
+
+    for (let i = amogusGroup.length - 1; i >= 0; i--) {
+      const a = amogusGroup[i];
+      a.life += dt;
+      a.mesh.position.add(a.vel);
+      a.mesh.rotation.z += a.rotVel;
+
+      // Fade in/out
+      let opacity: number;
+      const fadeTime = 1.5;
+      if (a.life < fadeTime) {
+        opacity = a.life / fadeTime * 0.2;
+      } else if (a.life > a.maxLife - fadeTime) {
+        opacity = Math.max(0, (a.maxLife - a.life) / fadeTime * 0.2);
+      } else {
+        opacity = 0.2;
+      }
+
+      a.mesh.children.forEach((child) => {
+        if (child instanceof THREE.Mesh) {
+          (child.material as THREE.MeshBasicMaterial).opacity = opacity;
+        }
+      });
+
+      // Remove when expired
+      if (a.life >= a.maxLife) {
+        scene.remove(a.mesh);
+        a.mesh.children.forEach((child) => {
+          if (child instanceof THREE.Mesh) {
+            child.geometry.dispose();
+            (child.material as THREE.Material).dispose();
+          }
+        });
+        amogusGroup.splice(i, 1);
+      }
+    }
 
     // Camera movement - mouse + scroll depth shift
     const camTargetX = mouse.x * 8;
