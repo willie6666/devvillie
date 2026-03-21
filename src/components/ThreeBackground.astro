@@ -1,0 +1,28 @@
+---
+---
+
+<div id="three-container"></div>
+
+<script>
+  import { initThreeScene } from '../scripts/three-scene';
+  const container = document.getElementById('three-container');
+  if (container) {
+    initThreeScene(container);
+  }
+</script>
+
+<style>
+  #three-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  #three-container :global(canvas) {
+    pointer-events: auto;
+  }
+</style>

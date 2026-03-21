@@ -1,0 +1,74 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg-primary: #0a0a1a;
+  --color-bg-card: #111128;
+  --color-bg-card-hover: #1a1a3e;
+  --color-accent-cyan: #00ffcc;
+  --color-accent-purple: #8b5cf6;
+  --color-text-primary: #e2e8f0;
+  --color-text-secondary: #94a3b8;
+  --color-border: #1e293b;
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-sans: 'Inter', sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+}
+
+::selection {
+  background-color: var(--color-accent-purple);
+  color: white;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-accent-purple);
+  border-radius: 3px;
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, var(--color-accent-cyan), var(--color-accent-purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.glow-cyan {
+  text-shadow: 0 0 20px rgba(0, 255, 204, 0.5);
+}
+
+.glow-purple {
+  text-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+}
+
+.card-glow {
+  box-shadow: 0 0 0 1px var(--color-border),
+              0 0 30px -10px rgba(0, 255, 204, 0.1);
+}
+
+.card-glow:hover {
+  box-shadow: 0 0 0 1px var(--color-accent-cyan),
+              0 0 40px -10px rgba(0, 255, 204, 0.3);
+}

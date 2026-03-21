@@ -1,0 +1,27 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ThreeBackground from '../components/ThreeBackground.astro';
+import Navbar from '../components/Navbar.astro';
+import Hero from '../components/Hero.astro';
+import About from '../components/About.astro';
+import Skills from '../components/Skills.astro';
+import Projects from '../components/Projects.astro';
+import Contact from '../components/Contact.astro';
+---
+
+<Layout title="Willie | Developer & Network Engineer">
+  <ThreeBackground />
+  <Navbar />
+  <main>
+    <Hero />
+    <About />
+    <Skills />
+    <Projects />
+    <Contact />
+  </main>
+</Layout>
+
+<script>
+  import { initScrollAnimations } from '../scripts/scroll-animations';
+  initScrollAnimations();
+</script>

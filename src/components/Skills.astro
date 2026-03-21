@@ -1,0 +1,47 @@
+---
+const skillCategories = [
+  {
+    title: 'Programming',
+    icon: '{ }',
+    skills: ['Python', 'JavaScript / TypeScript', 'C / C++', 'HTML / CSS', 'SQL'],
+  },
+  {
+    title: 'Networking',
+    icon: '~/>',
+    skills: ['TCP/IP', 'Cisco IOS', 'VLAN / Routing', 'Firewall / ACL', 'DNS / DHCP'],
+  },
+  {
+    title: 'Tools',
+    icon: '#!',
+    skills: ['Linux / Bash', 'Docker', 'Git', 'Nginx', 'Wireshark'],
+  },
+];
+---
+
+<section id="skills" class="relative z-10 py-24 px-6">
+  <div class="max-w-4xl mx-auto">
+    <h2 class="font-mono text-3xl md:text-4xl font-bold mb-2 scroll-fade">
+      <span class="text-[var(--color-accent-purple)]">#</span> Skills
+    </h2>
+    <div class="w-20 h-0.5 bg-[var(--color-accent-purple)] mb-12 scroll-fade"></div>
+
+    <div class="grid md:grid-cols-3 gap-6">
+      {skillCategories.map((cat) => (
+        <div class="p-6 rounded-lg bg-[var(--color-bg-card)] card-glow transition-all duration-300 hover:-translate-y-1 scroll-fade">
+          <div class="font-mono text-2xl text-[var(--color-accent-cyan)] mb-3">{cat.icon}</div>
+          <h3 class="font-mono text-lg font-semibold text-[var(--color-text-primary)] mb-4">
+            {cat.title}
+          </h3>
+          <ul class="space-y-2">
+            {cat.skills.map((skill) => (
+              <li class="flex items-center gap-2 text-sm text-[var(--color-text-secondary)]">
+                <span class="text-[var(--color-accent-cyan)] text-xs">&#9654;</span>
+                {skill}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

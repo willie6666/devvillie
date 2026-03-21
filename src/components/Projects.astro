@@ -1,0 +1,62 @@
+---
+const projects = [
+  {
+    title: 'Project 1',
+    description: '專案描述 - 待補充',
+    tags: ['Tag1', 'Tag2'],
+    link: '#',
+  },
+  {
+    title: 'Project 2',
+    description: '專案描述 - 待補充',
+    tags: ['Tag1', 'Tag2'],
+    link: '#',
+  },
+  {
+    title: 'Project 3',
+    description: '專案描述 - 待補充',
+    tags: ['Tag1', 'Tag2'],
+    link: '#',
+  },
+];
+---
+
+<section id="projects" class="relative z-10 py-24 px-6">
+  <div class="max-w-4xl mx-auto">
+    <h2 class="font-mono text-3xl md:text-4xl font-bold mb-2 scroll-fade">
+      <span class="text-[var(--color-accent-cyan)]">#</span> Projects
+    </h2>
+    <div class="w-20 h-0.5 bg-[var(--color-accent-cyan)] mb-12 scroll-fade"></div>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {projects.map((project) => (
+        <a
+          href={project.link}
+          class="group block p-6 rounded-lg bg-[var(--color-bg-card)] card-glow transition-all duration-300 hover:-translate-y-2"
+        >
+          <div class="flex items-center justify-between mb-4">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-cyan)" stroke-width="1" class="group-hover:stroke-[var(--color-accent-purple)] transition-colors">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+            </svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-text-secondary)" stroke-width="2" class="group-hover:stroke-[var(--color-accent-cyan)] transition-colors">
+              <path d="M7 17L17 7M17 7H7M17 7V17"></path>
+            </svg>
+          </div>
+          <h3 class="font-mono text-lg font-semibold text-[var(--color-text-primary)] mb-2 group-hover:text-[var(--color-accent-cyan)] transition-colors">
+            {project.title}
+          </h3>
+          <p class="text-sm text-[var(--color-text-secondary)] mb-4 leading-relaxed">
+            {project.description}
+          </p>
+          <div class="flex flex-wrap gap-2">
+            {project.tags.map((tag) => (
+              <span class="font-mono text-xs px-2 py-1 rounded bg-[var(--color-bg-primary)] text-[var(--color-accent-purple)]">
+                {tag}
+              </span>
+            ))}
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>

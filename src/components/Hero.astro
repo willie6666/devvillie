@@ -1,0 +1,101 @@
+---
+---
+
+<section id="hero" class="relative min-h-screen flex items-center justify-center z-10">
+  <div class="text-center px-6">
+    <p class="font-mono text-sm md:text-base text-[var(--color-accent-cyan)] mb-4 opacity-0" id="hero-greeting">
+      &gt; Hello, World!
+    </p>
+    <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold mb-4 opacity-0" id="hero-name">
+      <span class="text-gradient">Willie</span>
+    </h1>
+    <div class="font-mono text-lg md:text-xl text-[var(--color-text-secondary)] mb-8 h-8 opacity-0" id="hero-typer">
+      <span id="typewriter"></span><span class="animate-pulse">|</span>
+    </div>
+    <div class="flex gap-4 justify-center opacity-0" id="hero-cta">
+      <a
+        href="#about"
+        class="px-6 py-3 border border-[var(--color-accent-cyan)] text-[var(--color-accent-cyan)] font-mono text-sm rounded hover:bg-[var(--color-accent-cyan)] hover:text-[var(--color-bg-primary)] transition-all duration-300"
+      >
+        Explore
+      </a>
+      <a
+        href="#contact"
+        class="px-6 py-3 border border-[var(--color-accent-purple)] text-[var(--color-accent-purple)] font-mono text-sm rounded hover:bg-[var(--color-accent-purple)] hover:text-white transition-all duration-300"
+      >
+        Contact
+      </a>
+    </div>
+  </div>
+  <div class="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-cyan)" stroke-width="2">
+      <path d="M12 5v14M5 12l7 7 7-7"></path>
+    </svg>
+  </div>
+</section>
+
+<script>
+  // Typewriter effect
+  const titles = [
+    '逢甲大學 資訊工程學系',
+    '黑客社 網管部長',
+    'Network Engineer',
+    'Full Stack Developer',
+  ];
+
+  const typewriterEl = document.getElementById('typewriter');
+  let titleIndex = 0;
+  let charIndex = 0;
+  let isDeleting = false;
+
+  function type() {
+    if (!typewriterEl) return;
+    const current = titles[titleIndex];
+
+    if (isDeleting) {
+      typewriterEl.textContent = current.substring(0, charIndex - 1);
+      charIndex--;
+    } else {
+      typewriterEl.textContent = current.substring(0, charIndex + 1);
+      charIndex++;
+    }
+
+    let delay = isDeleting ? 50 : 100;
+
+    if (!isDeleting && charIndex === current.length) {
+      delay = 2000;
+      isDeleting = true;
+    } else if (isDeleting && charIndex === 0) {
+      isDeleting = false;
+      titleIndex = (titleIndex + 1) % titles.length;
+      delay = 500;
+    }
+
+    setTimeout(type, delay);
+  }
+
+  // Start typewriter after a short delay
+  setTimeout(type, 1000);
+
+  // Fade in hero elements
+  const heroEls = ['hero-greeting', 'hero-name', 'hero-typer', 'hero-cta'];
+  heroEls.forEach((id, i) => {
+    const el = document.getElementById(id);
+    if (el) {
+      setTimeout(() => {
+        el.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+        el.style.transform = 'translateY(0)';
+        el.style.opacity = '1';
+      }, 300 + i * 200);
+    }
+  });
+</script>
+
+<style>
+  #hero-greeting,
+  #hero-name,
+  #hero-typer,
+  #hero-cta {
+    transform: translateY(20px);
+  }
+</style>
