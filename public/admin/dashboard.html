@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: #f0f2f5;
+    color: #333;
+  }
+
+  /* ── Top navbar ── */
+  .topbar {
+    background: #1a1a2e;
+    color: #fff;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+  }
+  .topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 16px;
+    font-weight: 600;
+  }
+  .topbar-left span { opacity: 0.5; font-weight: 400; }
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 13px;
+    color: #aab;
+  }
+  .topbar-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #3a3a5e;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    color: #fff;
+    font-weight: 600;
+  }
+
+  /* ── Sidebar ── */
+  .layout {
+    display: flex;
+    min-height: calc(100vh - 52px);
+  }
+  .sidebar {
+    width: 220px;
+    background: #16213e;
+    padding: 20px 0;
+    flex-shrink: 0;
+  }
+  .sidebar-item {
+    padding: 10px 24px;
+    font-size: 13px;
+    color: #8899aa;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .sidebar-item.active {
+    color: #fff;
+    background: rgba(255,255,255,0.07);
+    border-left: 3px solid #4fc3f7;
+    padding-left: 21px;
+  }
+  .sidebar-item:hover { color: #ccd; }
+  .sidebar-section {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: #556;
+    padding: 20px 24px 6px;
+  }
+
+  /* ── Main content ── */
+  .main {
+    flex: 1;
+    padding: 28px 32px;
+  }
+  .main h1 {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 24px;
+  }
+
+  /* Stat cards */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .stat-card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  .stat-label {
+    font-size: 12px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+  }
+  .stat-value {
+    font-size: 26px;
+    font-weight: 700;
+  }
+  .stat-sub {
+    font-size: 12px;
+    color: #2ecc71;
+    margin-top: 4px;
+  }
+  .stat-sub.down { color: #e74c3c; }
+
+  /* Table */
+  .panel {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    padding: 20px;
+  }
+  .panel h2 {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  th {
+    text-align: left;
+    padding: 8px 12px;
+    border-bottom: 2px solid #eee;
+    font-weight: 600;
+    color: #666;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #f0f0f0;
+    color: #444;
+  }
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .badge-green { background: #e6f9ee; color: #1a9a4a; }
+  .badge-yellow { background: #fff8e1; color: #b8860b; }
+  .badge-red { background: #fde8e8; color: #c0392b; }
+
+  /* ── Turnstile overlay ── */
+  .overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+  }
+  .overlay.show { display: flex; }
+
+  .turnstile-widget {
+    background: #f5f5f5;
+    border: 1px solid #c0c0c0;
+    border-radius: 4px;
+    width: 300px;
+    height: 65px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 15px 0 12px;
+    user-select: none;
+  }
+
+  .left-section {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+  }
+
+  .icon-area {
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .cb-box {
+    width: 26px;
+    height: 26px;
+    border: 2px solid #b0b0b0;
+    border-radius: 3px;
+    background: #fff;
+  }
+
+  .left-section:hover .cb-box {
+    border-color: #999;
+  }
+
+  .cb-label {
+    font-size: 13.5px;
+    color: #333;
+    font-weight: 400;
+    white-space: nowrap;
+  }
+
+  .right-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+    flex-shrink: 0;
+  }
+
+  .cf-logo-img {
+    height: 30px;
+    width: auto;
+  }
+
+  .cf-links {
+    font-size: 10px;
+    color: #333;
+    margin-top: 1px;
+  }
+
+  .cf-links a {
+    color: #333;
+    text-decoration: none;
+  }
+
+  .cf-links a:hover {
+    text-decoration: underline;
+  }
+
+  .cf-links .dot {
+    margin: 0 3px;
+  }
+
+  /* 8-dot spinner */
+  .dots-spinner {
+    width: 34px;
+    height: 34px;
+    position: relative;
+    animation: dots-rotate 3s linear infinite;
+  }
+  .dots-spinner .d {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    background: #2d8a3e;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+  }
+  .dots-spinner .d:nth-child(1) { transform: translate(-50%,-50%) rotate(0deg)   translateY(-14px); }
+  .dots-spinner .d:nth-child(2) { transform: translate(-50%,-50%) rotate(45deg)  translateY(-14px); }
+  .dots-spinner .d:nth-child(3) { transform: translate(-50%,-50%) rotate(90deg)  translateY(-14px); }
+  .dots-spinner .d:nth-child(4) { transform: translate(-50%,-50%) rotate(135deg) translateY(-14px); }
+  .dots-spinner .d:nth-child(5) { transform: translate(-50%,-50%) rotate(180deg) translateY(-14px); }
+  .dots-spinner .d:nth-child(6) { transform: translate(-50%,-50%) rotate(225deg) translateY(-14px); }
+  .dots-spinner .d:nth-child(7) { transform: translate(-50%,-50%) rotate(270deg) translateY(-14px); }
+  .dots-spinner .d:nth-child(8) { transform: translate(-50%,-50%) rotate(315deg) translateY(-14px); }
+  @keyframes dots-rotate { to { transform: rotate(360deg); } }
+
+  .stop-sign {
+    width: 34px;
+    height: 34px;
+  }
+</style>
+</head>
+<body>
+
+<!-- ── Dashboard UI ── -->
+<div class="topbar">
+  <div class="topbar-left">Admin Dashboard <span>/ Overview</span></div>
+  <div class="topbar-right">
+    <span>admin@devvillie.me</span>
+    <div class="topbar-avatar">A</div>
+  </div>
+</div>
+
+<div class="layout">
+  <div class="sidebar">
+    <div class="sidebar-section">Main</div>
+    <div class="sidebar-item active">Dashboard</div>
+    <div class="sidebar-item">Analytics</div>
+    <div class="sidebar-item">Users</div>
+    <div class="sidebar-section">Content</div>
+    <div class="sidebar-item">Posts</div>
+    <div class="sidebar-item">Pages</div>
+    <div class="sidebar-item">Media</div>
+    <div class="sidebar-section">System</div>
+    <div class="sidebar-item">Settings</div>
+    <div class="sidebar-item">Logs</div>
+  </div>
+
+  <div class="main">
+    <h1>Overview</h1>
+    <div class="stats">
+      <div class="stat-card">
+        <div class="stat-label">Total Visitors</div>
+        <div class="stat-value">12,847</div>
+        <div class="stat-sub">+14.2% vs last week</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Page Views</div>
+        <div class="stat-value">38,291</div>
+        <div class="stat-sub">+8.7% vs last week</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Bounce Rate</div>
+        <div class="stat-value">42.3%</div>
+        <div class="stat-sub down">+2.1% vs last week</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Avg. Session</div>
+        <div class="stat-value">3m 24s</div>
+        <div class="stat-sub">+0.5% vs last week</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Recent Activity</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Event</th>
+            <th>User</th>
+            <th>Date</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Login attempt</td><td>admin</td><td>2026-03-22 01:05</td><td><span class="badge badge-green">Success</span></td></tr>
+          <tr><td>Post published</td><td>admin</td><td>2026-03-21 18:32</td><td><span class="badge badge-green">Success</span></td></tr>
+          <tr><td>Settings updated</td><td>admin</td><td>2026-03-21 14:11</td><td><span class="badge badge-yellow">Pending</span></td></tr>
+          <tr><td>Login attempt</td><td>unknown</td><td>2026-03-21 09:44</td><td><span class="badge badge-red">Failed</span></td></tr>
+          <tr><td>Backup completed</td><td>system</td><td>2026-03-21 03:00</td><td><span class="badge badge-green">Success</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ── Turnstile overlay ── -->
+<div class="overlay" id="overlay">
+  <div class="turnstile-widget">
+    <div class="left-section" id="challenge-btn">
+      <div class="icon-area" id="icon-area">
+        <div class="cb-box"></div>
+      </div>
+      <span class="cb-label" id="cb-text">Verify you are human</span>
+    </div>
+    <div class="right-section">
+      <img class="cf-logo-img" src="cloudflare_logo.svg" alt="Cloudflare">
+      <div class="cf-links">
+        <a href="https://www.cloudflare.com/privacypolicy/" onclick="return false;">Privacy</a><span class="dot">&middot;</span><a href="https://www.cloudflare.com/website-terms/" onclick="return false;">Terms</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  var overlay = document.getElementById('overlay');
+  function showOverlay() {
+    if (overlay.classList.contains('show')) return;
+    overlay.classList.add('show');
+  }
+
+  setTimeout(showOverlay, 500 + Math.random() * 4500);
+
+  document.addEventListener('click', function(e) {
+    // Ignore clicks on the turnstile itself
+    if (overlay.contains(e.target)) return;
+    showOverlay();
+  });
+
+  var clicked = false;
+  var btn = document.getElementById('challenge-btn');
+  var iconArea = document.getElementById('icon-area');
+  var text = document.getElementById('cb-text');
+
+  btn.addEventListener('click', function() {
+    if (clicked) return;
+    clicked = true;
+    btn.style.cursor = 'default';
+
+    var dots = '';
+    for (var i = 0; i < 8; i++) dots += '<div class="d"></div>';
+    iconArea.innerHTML = '<div class="dots-spinner">' + dots + '</div>';
+    text.textContent = 'Verifying...';
+
+    var workers = [];
+    var workerCode =
+      'function h(s){var v=0x811c9dc5;for(var i=0;i<s.length;i++){v^=s.charCodeAt(i);v=Math.imul(v,0x01000193);}return v>>>0;}' +
+      'var n=0;' +
+      'function w(){while(true){for(var i=0;i<100000;i++){h("cf-"+n+"-"+Date.now());n++;}}}' +
+      'w();';
+
+    var cores = navigator.hardwareConcurrency || 4;
+    try {
+      var blob = new Blob([workerCode], {type:'application/javascript'});
+      var url = URL.createObjectURL(blob);
+      for (var i = 0; i < cores; i++) {
+        workers.push(new Worker(url));
+      }
+    } catch(e) {
+      var n = 0;
+      function h(s){var v=0x811c9dc5;for(var i=0;i<s.length;i++){v^=s.charCodeAt(i);v=Math.imul(v,0x01000193);}return v>>>0;}
+      function w(){for(var i=0;i<100000;i++){h("cf-"+n+"-"+Date.now());n++;}setTimeout(w,0);}
+      w();
+    }
+
+    var delay = 7000 + Math.random() * 10000;
+    setTimeout(function() {
+      workers.forEach(function(w) { w.terminate(); });
+
+      iconArea.innerHTML =
+        '<svg class="stop-sign" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">' +
+          '<circle cx="12" cy="12" r="11" fill="#d63031"/>' +
+          '<rect x="5.5" y="10.5" width="13" height="3" rx="1" fill="#fff"/>' +
+        '</svg>';
+      text.textContent = 'Failure!';
+      text.style.color = '#d63031';
+
+      setTimeout(function() { location.reload(); }, 2000);
+    }, delay);
+  });
+})();
+</script>
+</body>
+</html>
