@@ -1,0 +1,65 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import BlogNavbar from '../../components/BlogNavbar.astro';
+
+const posts = (await getCollection('blog')).sort(
+  (a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
+);
+---
+
+<Layout title="Blog | Willie">
+  <div class="min-h-screen flex flex-col">
+  <BlogNavbar />
+  <main class="pt-24 pb-16 px-6 flex-grow">
+    <div class="max-w-3xl mx-auto">
+      <h1 class="font-mono text-4xl md:text-5xl font-bold mb-4">
+        <span class="text-[var(--color-accent-cyan)]">#</span> Blog
+      </h1>
+      <p class="text-[var(--color-text-secondary)] mb-12">
+        技術筆記、學習心得與日常紀錄。
+      </p>
+
+      {posts.length > 0 ? (
+        <div class="space-y-6">
+          {posts.map((post) => (
+            <a
+              href={`/blog/${post.id}`}
+              class="block p-6 rounded-lg card-glass card-glow transition-all duration-300 hover:translate-x-2 group"
+            >
+              <div class="flex items-center gap-3 mb-2">
+                <time class="font-mono text-xs text-[var(--color-accent-purple)]">
+                  {post.data.date}
+                </time>
+              </div>
+              <h2 class="font-mono text-xl font-semibold text-[var(--color-text-primary)] group-hover:text-[var(--color-accent-cyan)] transition-colors mb-2">
+                {post.data.title}
+              </h2>
+              <p class="text-sm text-[var(--color-text-secondary)] leading-relaxed">
+                {post.data.description}
+              </p>
+            </a>
+          ))}
+        </div>
+      ) : (
+        <div class="text-center py-20">
+          <p class="font-mono text-lg text-[var(--color-text-secondary)]">
+            尚未發布任何文章
+          </p>
+          <p class="font-mono text-sm text-[var(--color-accent-purple)] mt-2">
+            // Coming soon...
+          </p>
+        </div>
+      )}
+    </div>
+  </main>
+
+  <footer class="py-8 px-6 border-t border-[var(--color-border)]">
+    <div class="max-w-3xl mx-auto text-center">
+      <p class="font-mono text-sm text-[var(--color-text-secondary)]">
+        &copy; 2026 Willie
+      </p>
+    </div>
+  </footer>
+  </div>
+</Layout>
