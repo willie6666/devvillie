@@ -1,0 +1,56 @@
+---
+const friends = [
+  {
+    name: 'Zhenyuan',
+    url: 'https://zhenyuan.dev/',
+    description: '一個很電的人',
+    avatar: 'https://avatars.githubusercontent.com/u/69752436?v=4',
+  },
+  // 在這裡新增更多友情連結
+  // {
+  //   name: '名稱',
+  //   url: 'https://...',
+  //   description: '簡短描述',
+  //   avatar: 'https://...',
+  // },
+];
+---
+
+<section id="friends" class="relative z-10 py-24 px-6">
+  <div class="max-w-4xl mx-auto section-backdrop p-8 md:p-12">
+    <h2 class="font-mono text-3xl md:text-4xl font-bold mb-2 scroll-fade">
+      <span class="text-[var(--color-accent-cyan)]">#</span> Friends
+    </h2>
+    <div class="w-20 h-0.5 bg-[var(--color-accent-cyan)] mb-12 scroll-fade"></div>
+
+    <p class="text-[var(--color-text-secondary)] mb-8 scroll-fade card-glass rounded-lg px-5 py-4">
+      一些我覺得很棒的朋友們和他們的網站 :)
+    </p>
+
+    <div class="grid sm:grid-cols-2 gap-4">
+      {friends.map((friend) => (
+        <a
+          href={friend.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="group p-4 rounded-lg card-glass card-glow flex items-center gap-4 no-underline hover:-translate-y-1 transition-all duration-300 scroll-fade"
+        >
+          <img
+            src={friend.avatar}
+            alt={friend.name}
+            class="w-12 h-12 rounded-full object-cover flex-shrink-0"
+            loading="lazy"
+          />
+          <div class="min-w-0">
+            <div class="font-mono text-sm font-semibold text-[var(--color-text-primary)] group-hover:text-[var(--color-accent-cyan)] transition-colors truncate">
+              {friend.name}
+            </div>
+            <div class="font-mono text-xs text-[var(--color-text-secondary)] mt-1 line-clamp-2">
+              {friend.description}
+            </div>
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>
