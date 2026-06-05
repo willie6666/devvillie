@@ -143,8 +143,8 @@ direnv allow
             imports = [
               ./home.nix
               catppuccin.homeModules.catppuccin
-            ]
-          }
+            ];
+          };
         }
       ];
     };
@@ -156,6 +156,14 @@ direnv allow
 ```nix
 { config, pkgs, ... }:
 
+let
+  catppuccinGtk = pkgs.magnetic-catppuccin-gtk.override {
+    accent = [ "mauve" ];
+    shade = "dark";
+    size = "standard";
+    tweaks = [ ]; # 預設接近 mocha；macchiato 可用 [ "macchiato" ]
+  };
+in
 {
   home.username = "user";
   home.homeDirectory = "/home/user";
@@ -166,10 +174,17 @@ direnv allow
 
   home.packages = with pkgs; [
     fastfetch
+    
+    # Qt 設定工具
     libsForQt5.qt5ct
     qt6Packages.qt6ct
+
+    # Kvantum Qt theme engine
     libsForQt5.qtstyleplugin-kvantum
     qt6Packages.qtstyleplugin-kvantum
+
+    # GTK theme package
+    catppuccinGtk
   ];
 
   catppuccin = {
@@ -180,6 +195,24 @@ direnv allow
 
   gtk = {
     enable = true;
+
+    theme = {
+      name = "Catppuccin-GTK-Mauve-Dark";
+      package = catppuccinGtk;
+    };
+
+    iconTheme = {
+      name = "Papirus-Dark";
+      package = pkgs.papirus-icon-theme;
+    };
+
+    cursorTheme = {
+      name = "catppuccin-mocha-mauve-cursors";
+      package = pkgs.catppuccin-cursors.mochaMauve;
+      size = 24;
+    };
+
+    colorScheme = "dark";
   };
 
   qt = {
@@ -189,17 +222,21 @@ direnv allow
     style = {
       name = "kvantum";
     };
-  };
 
-  catppuccin.gtk = {
-    enable = true;
-    flavor = "mocha";
-    accent = "mauve";
+    qt5ctSettings = {
+      Appearance = {
+        style = "kvantum";
+        icon_theme = "Papirus-Dark";
+        standard_dialogs = "xdgdesktopportal";
+      };
+    };
 
-    icon = {
-      enable = true;
-      flavor = "mocha";
-      accent = "mauve";
+    qt6ctSettings = {
+      Appearance = {
+        style = "kvantum";
+        icon_theme = "Papirus-Dark";
+        standard_dialogs = "xdgdesktopportal";
+      };
     };
   };
 
