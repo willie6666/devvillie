@@ -260,19 +260,13 @@ Mod+D hotkey-overlay-title="Run an Application: fuzzel" { spawn-sh "noctalia-she
 prefer-no-csd
 ```
 
-~/.config/niri/config.kdl
-```kdl
-spawn-at-startup "xfsettingsd"
-```
 
 /etc/nixos/configuration.nix
 ```nix
+  programs.thunar.enable = true;
   programs.xfconf.enable = true;
-  programs.dconf.enable = true;
-
   services.gvfs.enable = true;
   services.tumbler.enable = true;
-  programs.thunar.enable = true;
 ```
 
 https://github.com/catppuccin/kitty
