@@ -108,23 +108,114 @@ direnv allow
 
 # Linux Ricing
 
-/etc/nixos/configuration.nix
+/etc/nixos/flake.nix
 ```nix
-  security.polkit.enable = true;
+{
+  description = "A very basic flake";
 
-  systemd.user.services.polkit-kde-authentication-agent-1 = {
-    description = "KDE Polkit Authentication Agent";
-    wantedBy = [ "graphical-session.target" ];
-    after = [ "graphical-session.target" ];
-    partOf = [ "graphical-session.target" ];
+  inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
 
-    serviceConfig = {
-      Type = "simple";
-      ExecStart = "${pkgs.kdePackages.polkit-kde-agent-1}/libexec/polkit-kde-authentication-agent-1";
-      Restart = "on-failure";
-      RestartSec = 1;
+    home-manager = {
+      url = "github:nix-community/home-manager/release-26.05";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    catppuccin.url = "github:catppuccin/nix/release-26.05";
+  };
+
+  outputs = { self, nixpkgs, home-manager, catppuccin }@inputs: {
+    nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
+      system = "x86_64-linux";
+
+      modules = [
+        ./configuration.nix
+
+        home-manager.nixosModules.home-manager {
+          home-manager.useGlobalPkgs = true;
+          home-manager.useUserPackages = true;
+
+          home-manager.extraSpecialArgs = {
+            inherit inputs;
+          };
+
+          home-manager.users.user = {
+            imports = [
+              ./home.nix
+              catppuccin.homeModules.catppuccin
+            ]
+          }
+        }
+      ];
     };
   };
+}
+```
+
+/etc/nixos/home.nix
+```nix
+{ config, pkgs, ... }:
+
+{
+  home.username = "user";
+  home.homeDirectory = "/home/user";
+
+  home.stateVersion = "26.05";
+
+  programs.home-manager.enable = true;
+
+  home.packages = with pkgs; [
+    fastfetch
+    libsForQt5.qt5ct
+    qt6Packages.qt6ct
+    libsForQt5.qtstyleplugin-kvantum
+    qt6Packages.qtstyleplugin-kvantum
+  ];
+
+  catppuccin = {
+    enable = true;
+    flavor = "mocha";
+    accent = "mauve";
+  };
+
+  gtk = {
+    enable = true;
+  };
+
+  qt = {
+    enable = true;
+    platformTheme.name = "qtct";
+
+    style = {
+      name = "kvantum";
+    };
+  };
+
+  catppuccin.gtk = {
+    enable = true;
+    flavor = "mocha";
+    accent = "mauve";
+
+    icon = {
+      enable = true;
+      flavor = "mocha";
+      accent = "mauve";
+    };
+  };
+
+  catppuccin.kvantum = {
+    enable = true;
+    flavor = "mocha";
+    accent = "mauve";
+    apply = true;
+  };
+
+  catppuccin.qt5ct = {
+    enable = true;
+    flavor = "mocha";
+    accent = "mauve";
+  };
+}
 ```
 
 ~/.config/niri/config.kdl
@@ -277,92 +368,26 @@ window-rule {
   
   services.upower.enable = true;
   services.power-profiles-daemon.enable = true;
+  security.polkit.enable = true;
+
+  systemd.user.services.polkit-kde-authentication-agent-1 = {
+    description = "KDE Polkit Authentication Agent";
+    wantedBy = [ "graphical-session.target" ];
+    after = [ "graphical-session.target" ];
+    partOf = [ "graphical-session.target" ];
+
+    serviceConfig = {
+      Type = "simple";
+      ExecStart = "${pkgs.kdePackages.polkit-kde-agent-1}/libexec/polkit-kde-authentication-agent-1";
+      Restart = "on-failure";
+      RestartSec = 1;
+    };
+  };
 }
 ```
 
 # configuration.nix 最後的樣子
 ```nix
-{ config, pkgs, ... }:
-
-{
-  imports =
-    [
-      ./hardware-configuration.nix
-    ];
-  boot.loader.grub.enable = true;
-  boot.loader.grub.device = "/dev/sda";
-  boot.loader.grub.useOSProber = true;
-
-  networking.hostName = "nixos";
-
-  networking.networkmanager.enable = true;
-
-  time.timeZone = "Asia/Taipei";
-
-  i18n.defaultLocale = "en_US.UTF-8";
-
-  i18n.extraLocaleSettings = {
-    LC_ADDRESS = "zh_TW.UTF-8";
-    LC_IDENTIFICATION = "zh_TW.UTF-8";
-    LC_MEASUREMENT = "zh_TW.UTF-8";
-    LC_MONETARY = "zh_TW.UTF-8";
-    LC_NAME = "zh_TW.UTF-8";
-    LC_NUMERIC = "zh_TW.UTF-8";
-    LC_PAPER = "zh_TW.UTF-8";
-    LC_TELEPHONE = "zh_TW.UTF-8";
-    LC_TIME = "zh_TW.UTF-8";
-  };
-
-  services.xserver.xkb = {
-    layout = "us";
-    variant = "";
-  };
-
-  users.users.user = {
-    isNormalUser = true;
-    description = "user";
-    extraGroups = [ "networkmanager" "wheel" ];
-    packages = with pkgs; [];
-  };
-
-  nixpkgs.config.allowUnfree = true;
-
-  environment.systemPackages = with pkgs; [
-    vim
-    git
-    kitty
-    mako
-    mesa-demos
-    vulkan-tools
-    xwayland-satellite
-    noctalia-shell
-    thunar
-    vscode
-    firefox
-  ];
-
-  services.openssh.enable = true;
-
-  networking.firewall.allowedTCPPorts = [ 22 ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # networking.firewall.enable = false;
-
-  system.stateVersion = "25.11"; # DONT CHANGE
-
-  programs.niri.enable = true;
-  services.displayManager.sddm.enable = true;
-  services.displayManager.sddm.wayland.enable = true;
-  virtualisation.vmware.guest = {
-    enable = true;
-    headless = false;
-    package = pkgs.open-vm-tools;
-  };
-  
-  services.upower.enable = true;
-  services.power-profiles-daemon.enable = true;
-
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
-}
 ```
 
 
