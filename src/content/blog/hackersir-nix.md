@@ -4,16 +4,27 @@ date: '2026-06-05'
 description: '用 Nix 打造可重現的 Linux 桌面'
 ---
 
+vm image:  
+https://fengchia-my.sharepoint.com/:u:/g/personal/d1349392_o365_fcu_edu_tw/IQAzpXlOsrVgQYauN6yacLaGAdc_eVaAgoPTO6egonek03k
+<iframe src="https://fengchia-my.sharepoint.com/personal/d1349392_o365_fcu_edu_tw/_layouts/15/embed.aspx?UniqueId=4e79a533-b5b2-4160-86ae-37ac9a70b686" width="640" height="360" frameborder="0" scrolling="no" allowfullscreen title="nixos-hackersir"></iframe>
+
+> username: user  
+> password: 1234
+
+---
+
+
 ```
 sudo vi /etc/nixos/configuration.nix
 ```
 
+/etc/nixos/configuration.nix
 ```nix
   services.openssh = {
     enable = true;
-    openFirewall = true;
+    openFirewall = false;
     settings = {
-      PasswordAuthentication = false;
+      PasswordAuthentication = true;
       KbdInteractiveAuthentication = false;
       PermitRootLogin = "no";
       AllowUsers = [ "user" ];
@@ -22,6 +33,11 @@ sudo vi /etc/nixos/configuration.nix
     };
   };
 ```
+/etc/nixos/configuration.nix
+```nix
+  networking.firewall.allowedTCPPorts = [ 22 ];
+```
+
 
 ```
 sudo nixos-rebuild switch
@@ -29,7 +45,45 @@ sudo nixos-rebuild boot
 sudo nixos-rebuild list-generations
 ```
 
+/etc/nixos/flake.nix
+```nix
+{
+  description = "A very basic flake";
 
+  inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
+  };
+
+  outputs = { self, nixpkgs }: {
+    nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
+      system = "x86_64-linux";
+
+      modules = [
+        ./configuration.nix
+      ];
+    };
+  };
+}
+```
+
+
+```nix
+  security.polkit.enable = true;
+
+  systemd.user.services.polkit-kde-authentication-agent-1 = {
+    description = "KDE Polkit Authentication Agent";
+    wantedBy = [ "graphical-session.target" ];
+    after = [ "graphical-session.target" ];
+    partOf = [ "graphical-session.target" ];
+
+    serviceConfig = {
+      Type = "simple";
+      ExecStart = "${pkgs.kdePackages.polkit-kde-agent-1}/libexec/polkit-kde-authentication-agent-1";
+      Restart = "on-failure";
+      RestartSec = 1;
+    };
+  };
+```
 
 
 
