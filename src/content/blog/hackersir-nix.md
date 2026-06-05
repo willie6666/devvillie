@@ -175,15 +175,12 @@ in
   home.packages = with pkgs; [
     fastfetch
     
-    # Qt 設定工具
     libsForQt5.qt5ct
     qt6Packages.qt6ct
 
-    # Kvantum Qt theme engine
     libsForQt5.qtstyleplugin-kvantum
     qt6Packages.qtstyleplugin-kvantum
 
-    # GTK theme package
     catppuccinGtk
   ];
 
@@ -199,11 +196,6 @@ in
     theme = {
       name = "Catppuccin-GTK-Mauve-Dark";
       package = catppuccinGtk;
-    };
-
-    iconTheme = {
-      name = "Papirus-Dark";
-      package = pkgs.papirus-icon-theme;
     };
 
     cursorTheme = {
@@ -226,7 +218,6 @@ in
     qt5ctSettings = {
       Appearance = {
         style = "kvantum";
-        icon_theme = "Papirus-Dark";
         standard_dialogs = "xdgdesktopportal";
       };
     };
@@ -234,7 +225,6 @@ in
     qt6ctSettings = {
       Appearance = {
         style = "kvantum";
-        icon_theme = "Papirus-Dark";
         standard_dialogs = "xdgdesktopportal";
       };
     };
