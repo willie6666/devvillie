@@ -23,6 +23,7 @@ https://fengchia-my.sharepoint.com/:u:/g/personal/d1349392_o365_fcu_edu_tw/IQAzp
 sudo vi /etc/nixos/configuration.nix
 ```
 
+## SSH
 /etc/nixos/configuration.nix
 ```nix
   services.openssh = {
@@ -55,6 +56,7 @@ sudo nixos-rebuild list-generations
 nix.settings.experimental-features = [ "nix-command" "flakes" ];
 ```
 
+## flake
 /etc/nixos/flake.nix
 ```nix
 {
@@ -82,6 +84,7 @@ sudo nix flake update
 sudo nixos-rebuild switch --flake
 ```
 
+## direnv
 /etc/nixos/configuration.nix
 ```nix
 programs.direnv.enable = true;
@@ -108,6 +111,7 @@ direnv allow
 
 # Linux Ricing
 
+## Home-Manager
 /etc/nixos/flake.nix
 ```nix
 {
@@ -152,6 +156,7 @@ direnv allow
 }
 ```
 
+## QT, GTK 主題
 /etc/nixos/home.nix
 ```nix
 { config, pkgs, ... }:
@@ -161,7 +166,7 @@ let
     accent = [ "mauve" ];
     shade = "dark";
     size = "standard";
-    tweaks = [ ]; # 預設接近 mocha；macchiato 可用 [ "macchiato" ]
+    tweaks = [ ];
   };
 in
 {
@@ -397,15 +402,14 @@ window-rule {
   services.power-profiles-daemon.enable = true;
   security.polkit.enable = true;
 
-  systemd.user.services.polkit-kde-authentication-agent-1 = {
-    description = "KDE Polkit Authentication Agent";
-    wantedBy = [ "graphical-session.target" ];
-    after = [ "graphical-session.target" ];
-    partOf = [ "graphical-session.target" ];
+  systemd.user.services.polkit-gnome-authentication-agent-1 = {
+    description = "GNOME Polkit Authentication Agent";
+
+    wantedBy = [ "default.target" ];
 
     serviceConfig = {
       Type = "simple";
-      ExecStart = "${pkgs.kdePackages.polkit-kde-agent-1}/libexec/polkit-kde-authentication-agent-1";
+      ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
       Restart = "on-failure";
       RestartSec = 1;
     };
