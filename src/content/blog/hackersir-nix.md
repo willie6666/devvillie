@@ -111,6 +111,17 @@ direnv allow
 
 # Linux Ricing
 
+## 更改畫面縮放
+```
+niri msg outputs
+```
+
+```kdl
+output "Virtual-1"{
+  scale 1.5
+}
+```
+
 ## Home-Manager
 /etc/nixos/flake.nix
 ```nix
