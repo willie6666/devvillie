@@ -297,3 +297,6 @@ window-rule {
     opacity 0.95
 }
 ```
+
+
+## 所有設定檔: <a href="/blog/hackersir-nix-configs" target="_blank">黑客社 2026/6/9 Nix 社課 設定檔</a>
