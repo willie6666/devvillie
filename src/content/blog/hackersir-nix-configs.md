@@ -809,4 +809,8 @@ window-rule {
 output "Virtual-1" {
     scale 1.5
 }
+
+cursor {
+  xcursor-theme "catppuccin-mocha-mauve-cursors"
+}
 ```
